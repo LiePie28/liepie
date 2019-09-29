@@ -1,0 +1,172 @@
+// 10727228 ¤ý¬£¾^ 10727244 ³¯¨ÎªY 
+#include <iostream>
+#include <fstream>
+#include <cstdio>
+#include <string.h>
+using namespace std;
+
+typedef enum { Copy = -1,Right,Left,Up,Down }Moves; // denote the directionof each move
+
+
+
+class CoXY {
+		int y ;
+		int x ;
+	public :
+		CoXY():y(0),x(0)
+		{};
+		
+		CoXY( int py, int px){
+			y = py ;
+			x = px ;
+		}
+		
+		CoXY(const CoXY& pt):y(pt.y),x(pt.x)
+		{}
+		
+		void setXY(const int py,const int px){
+			y = py ;
+			x = px ;
+		}//setXY
+		
+		int getX() const{
+			return x ;
+		}//getX
+		
+		int getY() const{
+			return y ;
+		}//getY
+		
+		CoXY nextXY(Moves dir){
+		
+			CoXY pt(y,x);
+			
+			switch(dir){
+				case Right: pt.x++;
+							break;
+				case Left:  pt.x--;
+							break;
+				case Up:    pt.y--;
+							break;
+				case Down:  pt.y++;
+							break;
+				defualt: ;
+			}
+			
+			return pt;
+		}//nextXY
+		
+		bool match(const CoXY& pt) const{
+			if((y == pt.y) && (x == pt.x))
+				return true;
+			return false ;
+			
+		}
+		
+		bool inRange(const CoXY& maxLimit) const{
+			if( (y >=0)&& (y < maxLimit.y) &&(x >=0)&& (x < maxLimit.x) )
+				return true ;
+			return false ;
+		}
+	
+	
+};
+
+
+class Maze {
+	char **mArray ;
+	public:
+		Maze()
+		{};
+		
+		Maze(const Maze& maze){
+			mArray = maze.mArray;
+		}
+		bool load(string fileName) ;
+		
+		void show(){
+		}
+		
+		void clr(){
+			delete mArray;
+		}
+		
+};
+
+
+bool Maze::load(string fileName){
+	FILE *infile = NULL ;
+	bool success = false ;
+	CoXY coMax(0,0) ;
+	char **mArray ;
+			
+	fileName = "input"+fileName+".txt" ;
+	infile = fopen(fileName.c_str(),"r");
+	if(infile == NULL)
+		cout << "\nFile \'"<< fileName <<"\' does not exist!!\n" ;
+	else
+	{
+		int arg1 = 0, arg2 = 0 ;
+		fscanf(infile,"%d %d",&arg1,&arg2) ;
+		coMax.setXY(arg2,arg1);
+		if((coMax.getX()>0)&&(coMax.getY()>0)){
+			int line = 0 ;
+			char *temp= new char[coMax.getX()+1];
+					
+			mArray = new char*[coMax.getY()];
+			while(fscanf(infile,"%s",temp )!= EOF) {
+				mArray[line] = new char[coMax.getX()+1];
+				strcpy(mArray[line++],temp) ;
+			}
+			
+			if(line == coMax.getY())
+				success = true ;
+		}
+		fclose(infile);
+						
+	}
+	return success ;
+} // maze::load
+
+
+int main(int argc, char** argv) {
+	
+	int command = -1 ;
+	
+	do {
+		Maze aMaze ;
+		string fileName;
+		//Modes mode = oneG ;
+		
+		cout << "*****Path Finding*****" << "\n" ;
+		cout << "*   0 : Quit         *" << "\n" ;
+		cout << "*   1 : One Goal     *" << "\n" ;
+		cout << "*   2 : Many Goals   *" << "\n" ;
+		cout << "**********************" << "\n" ;
+		cout << "Input a command(0 ,1 ,2):"<< "\n" ;
+		cin >> command ;
+		if( command == 1 || command == 2 ){
+		
+			cout << "Input the file name():"<< "\n" ;
+			cin >> fileName ;
+			
+			if(aMaze.load(fileName)){
+			}
+			
+			
+			
+			
+		}
+		else if (command == 0 )
+			break ;
+		else 
+			cout << "command does not exist!" << "\n" ;
+		
+		
+		
+		
+	}while(true);
+	system("pause");
+	return 0 ;
+	
+}
